@@ -1,12 +1,12 @@
 defmodule WeatherApp.Weather do
 
     def start(cities) do
-        manager_pid = spawn(__MODULE__, :manager, [[],Enum.count(cities)])
+        cities |> Enum.map(&create_task/1)
+        |> Enum.map(&Task.await/1)
+    end
 
-        cities |> Enum.map(fn city ->
-            pid = spawn(__MODULE__, :get_temperature, [])
-            send pid, {manager_pid, city}
-        end)
+    defp create_task(city) do
+        Task.async(fn -> temperature_of(city) end)
     end
 
     def get_temperature() do
