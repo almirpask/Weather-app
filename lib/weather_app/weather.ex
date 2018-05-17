@@ -52,11 +52,17 @@ defmodule WeatherApp.Weather do
         result = get_endpoint(location) |> HTTPoison.get |> parser_response
 
         case result do
-            {:ok, temp} -> "#{location}: #{temp} ºC"
-            :error -> "#{location}: not found"
+            {:ok, temp} -> IO.puts "#{location}: #{temp} ºC"
+            :ok -> "correto"
+            :error -> IO.puts "#{location}: not found"
         end 
     end
 
+    def temperatures_of(locations) do 
+    
+        locations |> Enum.each(fn location -> temperature_of location
+        end)
+    end
     defp parser_response({:ok, %HTTPoison.Response{body: body, status_code: 200}}) do
         body |> JSON.decode! |> compute_temperature
     end
